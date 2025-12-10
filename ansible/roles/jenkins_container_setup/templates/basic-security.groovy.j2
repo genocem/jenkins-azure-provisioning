@@ -1,0 +1,16 @@
+import jenkins.model.*
+import hudson.security.*
+
+def instance = Jenkins.get()
+
+def hudsonRealm = new HudsonPrivateSecurityRealm(true)
+hudsonRealm.createAccount("{{ jenkins_account_username }}", "{{ jenkins_account_password }}")
+instance.setSecurityRealm(hudsonRealm)
+
+def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+
+instance.setAuthorizationStrategy(strategy)
+strategy.setAllowAnonymousRead(false)
+
+instance.save()
+

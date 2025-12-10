@@ -1,0 +1,10 @@
+- name: setting up jenkins vm
+  hosts: all
+  vars_files:
+    - ./secrets.yaml
+  become: true
+  roles:
+    - docker_setup
+    - jenkins_add_pipelines
+    - jenkins_plugins
+    - jenkins_container_setup

@@ -1,0 +1,4 @@
+- name: Copy Jenkins plugins list
+  copy:
+    src: plugins.txt
+    dest: /home/adminuser/jenkins_configs/plugins.txt

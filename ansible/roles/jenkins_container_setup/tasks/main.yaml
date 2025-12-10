@@ -1,0 +1,45 @@
+- name: Create Jenkins init scripts directory
+  file:
+    path: /home/adminuser/jenkins_configs/init.groovy.d
+    state: directory
+
+- name: Deploy Jenkins admin init script
+  template:
+    src: basic-security.groovy.j2
+    dest: /home/adminuser/jenkins_configs/init.groovy.d/basic-security.groovy
+    owner: adminuser
+    group: adminuser
+    mode: '0600'
+
+
+- name: get the container up and running
+  community.docker.docker_container:
+    name: jenkins
+    image: jenkins/jenkins:lts-jdk21
+    state: started
+    restart_policy: always
+    # network_mode: host
+    # having network_mode set to host makes it so that the port that jenkins will be using is 8080 
+    # and jenkins will be sharing the same netword as the host aka be able to login to azure and push into the contianer registry
+    # of course we have to enable managed identity on it first using 
+    # az vm identity assign --name <vm-name> --resource-group <resource-group>
+    # imma check if there's a way to do this in terraform
+    # nevermind idk why it did not work and i aint gonna fix it now imma just use 8080
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/adminuser/jenkins_configs/jenkins.yaml:/var/jenkins_home/casc_configs/jenkins.yaml
+      - /home/adminuser/jenkins_jobs:/var/jenkins_home/dsl
+      - /home/adminuser/jenkins_configs/plugins.txt:/usr/share/jenkins/ref/plugins.txt
+      - /home/adminuser/jenkins_configs/init.groovy.d:/usr/share/jenkins/ref/init.groovy.d
+    env:
+      # imma sleep so pls find a way to make it work also pls add the acr username and pass to credentials
+      DOCKER_HOST:   unix:///var/run/docker.sock
+      CASC_JENKINS_CONFIG: /var/jenkins_home/casc_configs/jenkins.yaml
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false
+    command: >
+      bash -c "jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt && exec /usr/bin/tini -- /usr/local/bin/jenkins.sh"

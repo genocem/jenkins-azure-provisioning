@@ -1,0 +1,16 @@
+configuration-as-code
+job-dsl
+git
+gitlab-plugin
+workflow-aggregator
+pipeline-model-definition
+docker-workflow
+credentials
+nodejs
+blueocean
+pipeline-stage-view
+git-client
+plain-credentials
+workflow-job
+workflow-cps
+ws-cleanup

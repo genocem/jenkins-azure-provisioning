@@ -1,0 +1,23 @@
+---
+jenkins:
+  systemMessage: "IT works !!!!!"
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: gitlab_stageDevops_commercial_token
+              username: token
+              password: {{ gitlab_stageDevops_commercial_token }}
+              description: "stage_devops access token"
+          - usernamePassword:
+              scope: GLOBAL
+              id: gitlab_reclamation_token
+              username: token
+              password: {{ gitlab_reclamation_token }}
+              description: "reclamation microservice access token"
+
+jobs:
+  - file: /var/jenkins_home/dsl/createPipeline_reclamation_job.groovy
+  - file: /var/jenkins_home/dsl/createPipeline_commercial_job.groovy

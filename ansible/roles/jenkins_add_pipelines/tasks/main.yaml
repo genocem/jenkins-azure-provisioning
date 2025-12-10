@@ -1,0 +1,25 @@
+- name: create jenkins config directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+    - /home/adminuser/jenkins_configs
+    - /home/adminuser/jenkins_jobs
+
+- name: copy jenkins.yaml to the VM
+  template:
+    src: jenkins.yaml.j2
+    dest: /home/adminuser/jenkins_configs/jenkins.yaml
+    owner: adminuser
+    group: adminuser
+    mode: '0644'
+
+- name: copy commercial pipeline to the VM
+  copy:
+    src: createPipeline_commercial_job.groovy
+    dest: /home/adminuser/jenkins_jobs/createPipeline_commercial_job.groovy
+
+- name: copy reclamation pipeline to the VM
+  copy:
+    src: createPipeline_reclamation_job.groovy
+    dest: /home/adminuser/jenkins_jobs/createPipeline_reclamation_job.groovy

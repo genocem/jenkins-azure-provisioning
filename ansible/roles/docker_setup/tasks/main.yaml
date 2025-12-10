@@ -1,0 +1,14 @@
+- name: ensure pip is installed
+  apt:
+    name: python3-pip
+    state: present
+    update_cache: yes
+- name: installing docker.io
+  apt:
+    name: docker.io
+    state: present
+- name: installing docker sdk to be able to do community.docker.docker_container
+  apt:
+    name: python3-docker
+- name: add user to the docker group
+  ansible.builtin.shell: usermod -aG docker adminuser
